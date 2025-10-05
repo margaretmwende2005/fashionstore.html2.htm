@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fashion Store Inventory</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #0b07f6; padding: 10px; text-align: left; }
+        th { background-color: #01fa1e; }
+        .form-section { margin-bottom: 30px; }
+        input { padding: 5px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Fashion Store Inventory</h1>
+
+    <div class="form-section">
+        <h2>Add New Item</h2>
+        <form id="addForm">
+            <input type="text" name="name" placeholder="Item name" required>
+            <input type="number" step="0.01" name="price" placeholder="Price" required>
+            <input type="number" name="quantity_bought" placeholder="Quantity bought" required>
+            <button type="submit">Add Item</button>
+        </form>
+    </div>
+
+    <h2>Shoes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>shoe</th>
+                <th>Price</th>
+                <th>Bought</th>
+                <th>Sold</th>
+                <th>in stock</th>
+                <th>Revenue</th>
+                <th>Sell</th>
+            </tr>
+        </thead>
+        <tbody id="Shoe Table">
+        
+            <tr data-id="{{ item.id }}">
+                <td>Nike Air Max</td>
+                <td>$3050</td>
+                <td>4050</td>
+                <td>30</td>
+                <td>90</td>
+                <td>$1380</td>
+                <td>
+                    <input type="number" min="1" placeholder="Qty" class="sellQty">
+                    <button class="sellBtn">Sell</button>
+                </td>
+            </tr>
+           
+        </tbody>
+    </table>
+
+    <h3>Total Revenue: $600</h3>
+<h2>Books</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Bought</th>
+                <th>Sold</th>
+                <th>In Stock</th>
+                <th>Revenue</th>
+                <th>Sell</th>
+            </tr>
+        </thead>
+        <tbody id="Books Table">
+           
+            <tr data-id="{{ item.id }}">
+                <td>Born a crime</td>
+                <td>$550</td>
+                <td>950</td>
+                <td>25</td>
+                <td>15</td>
+                <td>$500</td>
+                <td>
+                    <input type="number" min="1" placeholder="Qty" class="sellQty">
+                    <button class="sellBtn">Sell</button>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <h3>Total Revenue: $500</h3>
+
+    <h2>Bedsheet</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Bought</th>
+                <th>Sold</th>
+                <th>In Stock</th>
+                <th>Revenue</th>
+                <th>Sell</th>
+            </tr>
+        </thead>
+        <tbody id="Books Table">
+           
+            <tr data-id="{{ item.id }}">
+                <td>Striped Bedsheet</td>
+                <td>$50</td>
+                <td>450</td>
+                <td>85</td>
+                <td>25</td>
+                <td>$500</td>
+                <td>
+                    <input type="number" min="1" placeholder="Qty" class="sellQty">
+                    <button class="sellBtn">Sell</button>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <h3>Total Revenue: $700</h3>
+    <script>
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/add', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            });
+        });
+
+        document.querySelectorAll('.sellBtn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const itemId = row.getAttribute('data-id');
+                const quantity = row.querySelector('.sellQty').value;
+
+                fetch(`/sell/${itemId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || data.error);
+                    window.location.reload();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
